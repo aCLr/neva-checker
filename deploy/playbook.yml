@@ -1,0 +1,18 @@
+---
+- name: update web servers
+  hosts: neva_check
+  gather_facts: no
+
+  tasks:
+
+  - name: start container
+    docker_container:
+      name: neva-check
+      pull: true
+      image: anton1234/neva-check
+      recreate: yes
+      env:
+        NEVA_LOGIN: "{{lookup('env', 'NEVA_LOGIN')}}"
+        NEVA_PASSWORD: "{{lookup('env', 'NEVA_PASSWORD')}}"
+        TG_TOKEN: "{{lookup('env', 'TG_TOKEN')}}"
+        RUST_LOG: "info"

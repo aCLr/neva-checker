@@ -1,11 +1,40 @@
 use serde::{Deserialize, Serialize};
 
 #[derive(Deserialize)]
-pub struct Response<R> {
+pub struct FunctionResponse<R> {
     r#return: R,
 }
 
-impl<R> Response<R> {
+#[derive(Deserialize)]
+pub struct Error {
+    text: String,
+}
+
+impl Error {
+    pub fn text(&self) -> &str {
+        &self.text
+    }
+}
+
+#[derive(Deserialize)]
+pub struct ErrorResponse {
+    error: Error,
+}
+
+impl ErrorResponse {
+    pub fn error(&self) -> &Error {
+        &self.error
+    }
+}
+
+#[derive(Deserialize)]
+#[serde(untagged)]
+pub enum Response<R> {
+    Success(FunctionResponse<R>),
+    Error(ErrorResponse),
+}
+
+impl<R> FunctionResponse<R> {
     pub fn r#return(self) -> R {
         self.r#return
     }

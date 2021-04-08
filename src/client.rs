@@ -1,4 +1,4 @@
-use crate::result::Result;
+use crate::result::{Error, Result};
 use crate::structs::{Contract, Response, TripDetails};
 use reqwest::Client as ReqwestClient;
 use serde::de::DeserializeOwned;
@@ -47,8 +47,13 @@ impl Client {
             .await?
             .json()
             .await?;
-        *t = Some(resp.r#return());
-        Ok(())
+        match resp {
+            Response::Success(r) => {
+                *t = Some(r.r#return());
+                Ok(())
+            }
+            Response::Error(e) => Err(Error::DecodeError(e.error().text().to_string())),
+        }
     }
 
     async fn make_request<R: DeserializeOwned>(&self, function: &str) -> Result<R> {
@@ -68,7 +73,10 @@ impl Client {
             ))
             .send()
             .await?;
-        Ok(resp.json::<Response<R>>().await?.r#return())
+        match resp.json::<Response<R>>().await? {
+            Response::Success(res) => Ok(res.r#return()),
+            Response::Error(err) => Err(Error::DecodeError(err.error().text().to_string())),
+        }
     }
 
     pub async fn get_balance(&self) -> Result<Option<Contract>> {
