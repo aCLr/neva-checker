@@ -7,7 +7,7 @@ use tokio::task::JoinHandle;
 pub fn start_bot<S: AsRef<str>>(token: S, client: Client) -> JoinHandle<Result<()>> {
     let api = Api::new(token);
     tokio::spawn(async move {
-
+        log::info!("bot started");
         let mut stream = api.stream();
         while let Some(update) = stream.next().await {
             log::info!("get new update: {:?}", update);

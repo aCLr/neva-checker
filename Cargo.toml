@@ -13,4 +13,4 @@ log = "0.4.14"
 serde = "1.0.125"
 telegram-bot = "0.8.0"
 futures = "0.3.13"
-tokio = {version = "0.2", features = ["sync", "macros"]}
+tokio = {version = "0.2", features = ["sync", "macros", "signal"]}
