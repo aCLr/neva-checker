@@ -11,6 +11,8 @@
       pull: true
       image: anton1234/neva-check
       recreate: yes
+      restart: yes
+      restart_policy: unless-stopped
       env:
         NEVA_LOGIN: "{{lookup('env', 'NEVA_LOGIN')}}"
         NEVA_PASSWORD: "{{lookup('env', 'NEVA_PASSWORD')}}"
